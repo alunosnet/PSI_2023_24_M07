@@ -6,7 +6,7 @@ import utils
 
 
 #nome do ficheiro
-nome_ficheiro = "alunos.txt"
+nome_ficheiro = "alunos2.txt"
 
 def criar_aluno():
     """Função para ler os seguintes dados:
