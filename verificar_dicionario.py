@@ -35,5 +35,6 @@ def main():
             break
     #se alguma não existir dar erro, mostra qual a palavra errada e continua para as seguintes
     #TODO: falta dar uma mensagem a dizer que não há erros!
+    
 if __name__=="__main__":
     main()
