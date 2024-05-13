@@ -7,7 +7,7 @@
     Dados:
         Nome [100] Idade [4] Email [64] Telefone [9]
 """
-import struct
+import struct, os
 
 nome_ficheiro="agenda.dat"
 
@@ -27,15 +27,72 @@ def adicionar():
         ficheiro.write(telefone)
     print("Contacto adicionado com sucesso.")
 
-
 def editar():
-    pass
+    posicao = int(input("Qual o nº do contacto a editar:"))
+    posicao = (posicao - 1) * 177
+    with open(nome_ficheiro,"rb+") as ficheiro:
+        ficheiro.seek(posicao)
+        dados_binarios = ficheiro.read(177)
+        if not dados_binarios:
+            return
+        nome, idade, email, telefone = struct.unpack("100si64s9s",dados_binarios)
+        nome = nome.decode('utf-8').rstrip('\x00')
+        email = email.decode('utf-8').rstrip('\x00')
+        telefone = telefone.decode('utf-8').rstrip('\x00')
+        print(f"{nome}\t{idade}\t{email}\t{telefone}")
+        #novos dados do contacto
+        nome=input("Nome:")
+        idade=int(input("Idade:"))
+        email=input("Email:")
+        telefone=input("Telefone:")
+        #posicionar no ficheiro
+        ficheiro.seek(posicao)
+        nome=struct.pack("100s",nome.encode("utf-8"))
+        ficheiro.write(nome)
+        idade=struct.pack("i",idade)
+        ficheiro.write(idade)
+        email=struct.pack("64s",email.encode("utf-8"))
+        ficheiro.write(email)
+        telefone=struct.pack("9s",telefone.encode("utf-8"))
+        ficheiro.write(telefone)
+
 
 def remover():
     pass
 
 def listar():
-    pass
+    #verificar se o ficheiro existe
+    if os.path.exists(nome_ficheiro)==False:
+        print("Não tem contactos.")
+        return
+    op=input("Listar [T]odos ou Lista [U]m")
+    with open(nome_ficheiro,"rb") as ficheiro:
+        if op in "Tt":
+            #listar todos
+            i = 1
+            while True:
+                dados_binarios = ficheiro.read(177)
+                if not dados_binarios:
+                    break
+                nome, idade, email, telefone = struct.unpack("100si64s9s",dados_binarios)
+                nome = nome.decode('utf-8').rstrip('\x00')
+                email = email.decode('utf-8').rstrip('\x00')
+                telefone = telefone.decode('utf-8').rstrip('\x00')
+                print(f"{i}\t{nome}\t{idade}\t{email}\t{telefone}")
+                i += 1
+        elif op in "Uu":
+            #listar um contacto
+            posicao = int(input("Qual o nº do contacto:"))
+            posicao=(posicao-1) * 177
+            ficheiro.seek(posicao)
+            dados_binarios = ficheiro.read(177)
+            if not dados_binarios:
+                return
+            nome, idade, email, telefone = struct.unpack("100si64s9s",dados_binarios)
+            nome = nome.decode('utf-8').rstrip('\x00')
+            email = email.decode('utf-8').rstrip('\x00')
+            telefone = telefone.decode('utf-8').rstrip('\x00')
+            print(f"{nome}\t{idade}\t{email}\t{telefone}")
 
 def main():
     while True:
