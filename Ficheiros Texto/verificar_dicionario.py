@@ -15,9 +15,14 @@ def main():
     if not frase or frase.strip()=="":
         print("Tem de escrever uma frase")
         return
+    #limpar as palavras de carateres de pontuação
+    retirar=";,.:?!="
+    for c in frase:
+        if c in retirar:
+            frase=frase.replace(c,'')
+
     #converter a frase numa lista de palavras
-    palavras=frase.lower().split(' ')
-    #TODO: limpar as palavras de carateres de pontuação
+    palavras=frase.lower().split(' ')    
     p_dicionario=[]
     #abrir o ficheiro
     with open(dicionario,"r",encoding='utf-8') as ficheiro:
@@ -28,13 +33,15 @@ def main():
                 break
             p_dicionario.append(linha.strip().lower())
     #ciclo para percorrer a lista das palavras do utilizador
+    correto = True
     for palavra in palavras:
         #verificar se cada uma existe na lista do ficheiro
         if palavra not in p_dicionario:
             print(f"A palavra:{palavra} não existe no dicionário")
+            correto = False
             break
     #se alguma não existir dar erro, mostra qual a palavra errada e continua para as seguintes
-    #TODO: falta dar uma mensagem a dizer que não há erros!
-    
+    if correto:
+        print("A frase não tem erros.")
 if __name__=="__main__":
     main()
