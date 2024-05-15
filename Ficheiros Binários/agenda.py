@@ -56,9 +56,29 @@ def editar():
         telefone=struct.pack("9s",telefone.encode("utf-8"))
         ficheiro.write(telefone)
 
+def ficheiro_existe(nomeficheiro):
+    return os.path.exists(nomeficheiro)
 
 def remover():
-    pass
+    #verificar se o ficheiro existe
+    if ficheiro_existe(nome_ficheiro)==False:
+        print("Não tem contactos.")
+        return
+    posicao = int(input("Qual a posição do contacto a remover: "))
+    posicao = (posicao -1) * 177
+    registo = 0
+    with open(nome_ficheiro,"rb") as ficheiro_leitura:
+        with open("TEMP.DAT","wb") as ficheiro_escrita:
+            while True:
+                dados = ficheiro_leitura.read(177)
+                if not dados:
+                    break
+                if posicao != registo:
+                    ficheiro_escrita.write(dados)
+                registo += 177
+    os.remove(nome_ficheiro)
+    os.rename("TEMP.DAT",nome_ficheiro)
+    print("Contacto removido com sucesso.")
 
 def listar():
     #verificar se o ficheiro existe
