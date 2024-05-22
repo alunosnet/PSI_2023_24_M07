@@ -14,17 +14,21 @@ def listar_avarias():
             try:
                 avaria=pickle.load(f_avarias)
                 #procurar o veículo ao ficheiro
-                with open(NOME_FICHEIRO,"rb") as f_carros:
-                    while True:
-                        try:
-                            carro=pickle.load(f_carros)
-                            if carro['matricula']==avaria['matricula']:
-                                break
-                        except EOFError:
-                            break
-                print(f"{avaria['matricula']} \t {carro['marca']} \t {carro['modelo']} \t {carro['ano']} \t {avaria['descricao']} \t {avaria['data']} \t {avaria['custo']}")
+                carro=getVeiculo(avaria['matricula'])
+                if carro!=None:
+                    print(f"{avaria['matricula']} \t {carro['marca']} \t {carro['modelo']} \t {carro['ano']} \t {avaria['descricao']} \t {avaria['data']} \t {avaria['custo']}")
             except EOFError:
                 break
+
+def getVeiculo(matricula):
+    with open(NOME_FICHEIRO,"rb") as f_carros:
+        while True:
+            try:
+                carro=pickle.load(f_carros)
+                if carro['matricula']==matricula:
+                    return carro
+            except EOFError:
+                return None
 
 def adicionar_avaria():
     if os.path.exists(NOME_FICHEIRO)==False:
